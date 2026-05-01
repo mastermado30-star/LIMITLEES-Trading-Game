@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIMITLEES Trading Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-image: linear-gradient(rgba(2, 6, 23, 0.82), rgba(2, 6, 23, 0.9)), url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game-box {
+      background: rgba(17, 24, 39, 0.88);
+      width: 100%;
+      max-width: 850px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      backdrop-filter: blur(14px);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      color: #f8fafc;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .money {
+      font-size: 20px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 30px;
+      line-height: 2;
+      padding: 25px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
+      font-weight: 700;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      background: rgba(37, 99, 235, 0.18);
+      backdrop-filter: blur(10px);
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-4px) scale(1.02);
+      background: rgba(34,197,94,0.25);
+      border-color: rgba(34,197,94,0.4);
+      box-shadow: 0 12px 30px rgba(34,197,94,0.18);
+    }
+
+    .result {
+      margin-top: 10px;
+      font-size: 19px;
+      line-height: 2;
+      color: #f8fafc;
+      font-weight: 600;
+    }
+
+    .lead-box {
+      margin-top: 30px;
+      padding: 28px;
+      border-radius: 22px;
+      background: rgba(5, 46, 22, 0.85);
+      border: 1px solid rgba(34,197,94,0.2);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
+
+    .lead-box a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      background: #22c55e;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-box">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:10px;">
+    <div style="background:rgba(34,197,94,0.15); padding:10px 18px; border-radius:14px; border:1px solid rgba(34,197,94,0.2);">🔥 Free Trading Challenge</div>
+    <div style="background:rgba(250,204,21,0.12); padding:10px 18px; border-radius:14px; border:1px solid rgba(250,204,21,0.2);">🏆 Top Trader Mode</div>
+  </div>
+  <h1>📈 LIMITLEES Trading Game</h1>
+  <p style="margin-bottom:20px; font-size:18px; color:#facc15;">LIMITLEES Academy | Learn • Trade • Grow</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
+    <div class="money" id="money">💰 رصيدك: 1000$</div>
+    <div class="money">⚡ المستوى: Beginner Trader</div>
+  </div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <div style="margin-top:25px; padding:18px; border-radius:18px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.05);">
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+  let balance = 1000;
+  let step = 0;
+
+  const questions = [
+    {
+      text: "السوق هبط فجأة بسبب خبر قوي... ماذا تفعل؟",
+      options: [
+        { text: "أدخل شراء بسرعة", value: -200 },
+        { text: "أنتظر التأكيد", value: 300 },
+        { text: "أضاعف العقود", value: -300 }
+      ]
+    },
+    {
+      text: "صفقة رابحة وصلت +150$... ماذا تفعل؟",
+      options: [
+        { text: "أغلق الصفقة", value: 200 },
+        { text: "أطمع أكثر", value: -250 },
+        { text: "أنقل وقف الخسارة", value: 150 }
+      ]
+    },
+    {
+      text: "صديقك قال لك فرصة مضمونة 100%...",
+      options: [
+        { text: "أدخل فورًا", value: -300 },
+        { text: "أحلل بنفسي", value: 300 },
+        { text: "أقترض للدخول", value: -500 }
+      ]
+    },
+    {
+      text: "وصل السعر لمنطقة مقاومة قوية... ماذا تفعل؟",
+      options: [
+        { text: "أبيع مباشرة", value: 200 },
+        { text: "أشتري بعشوائية", value: -250 },
+        { text: "أنتظر كسر واضح", value: 300 }
+      ]
+    },
+    {
+      text: "بعد 3 خسائر متتالية شعرت بالغضب...",
+      options: [
+        { text: "أدخل صفقة انتقام", value: -400 },
+        { text: "أتوقف وأراجع", value: 300 },
+        { text: "أضاعف اللوت", value: -500 }
+      ]
+    },
+    {
+      text: "خبر الفائدة الأمريكية سيصدر الآن...",
+      options: [
+        { text: "أدخل قبل الخبر", value: -250 },
+        { text: "أنتظر بعد الخبر", value: 300 },
+        { text: "أدخل بكل رأس المال", value: -500 }
+      ]
+    },
+    {
+      text: "رأيت ترند صاعد قوي...",
+      options: [
+        { text: "أدخل مع الاتجاه", value: 250 },
+        { text: "أبيع عكس الاتجاه", value: -300 },
+        { text: "أنتظر إعادة اختبار", value: 200 }
+      ]
+    },
+    {
+      text: "وقف الخسارة قريب جدًا...",
+      options: [
+        { text: "أتركه كما هو", value: 200 },
+        { text: "أحذفه تمامًا", value: -400 },
+        { text: "أبعده بدون سبب", value: -250 }
+      ]
+    },
+    {
+      text: "تحليلك يقول شراء لكن الجميع يقول بيع...",
+      options: [
+        { text: "أتبع الجميع", value: -200 },
+        { text: "ألتزم بخطتي", value: 300 },
+        { text: "أدخل بدون خطة", value: -350 }
+      ]
+    },
+    {
+      text: "حققت هدفك الشهري مبكرًا...",
+      options: [
+        { text: "أتوقف للحفاظ على الأرباح", value: 300 },
+        { text: "أطمع أكثر", value: -300 },
+        { text: "أدخل صفقات عشوائية", value: -400 }
+      ]
+    }
+  ];
+
+  function loadQuestion() {
+    if (step >= questions.length) {
+      finishGame();
+      return;
+    }
+
+    document.getElementById("result").innerHTML = "";
+    const q = questions[step];
+    document.getElementById("question").innerHTML = `🎯 <span style="color:#facc15">السؤال ${step + 1}</span><br><br>${q.text}`;
+
+    const optionsBox = document.getElementById("options");
+    optionsBox.innerHTML = "";
+
+    q.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.innerText = option.text;
+      btn.onclick = () => choose(option.value);
+      optionsBox.appendChild(btn);
+    });
+  }
+
+  function choose(value) {
+    balance += value;
+    document.getElementById("money").innerText = `رصيدك: ${balance}$`;
+
+    document.getElementById("result").innerHTML =
+      value > 0
+        ? `✅ قرار ممتاز! ربحت ${value}$`
+        : `❌ قرار خاطئ! خسرت ${Math.abs(value)}$`;
+
+    step++;
+
+    setTimeout(() => {
+      loadQuestion();
+    }, 1500);
+  }
+
+  function finishGame() {
+    document.getElementById("question").innerHTML = "🏆 <span style='color:#22c55e'>انتهى التحدي!</span><br><br>تم تقييم قراراتك في السوق";
+    document.getElementById("options").innerHTML = "";
+
+    let message = "";
+
+    if (balance >= 1300) {
+      message = `
+        <div class="lead-box">
+          <h2>أنت مؤهل للمستوى الاحترافي 🚀</h2>
+          <p>سجل الآن في الدورة المجانية وابدأ التداول الحقيقي</p>
+          <a href="#">الدخول إلى الدورة المجانية</a>
+        </div>
+      `;
+    } else {
+      message = `
+        <div class="lead-box">
+          <h2>تحتاج تطوير مهاراتك 📈</h2>
+          <p>الدورة المجانية ستساعدك تبدأ بشكل صحيح</p>
+          <a href="#">ابدأ الدورة المجانية</a>
+        </div>
+      `;
+    }
+
+    document.getElementById("result").innerHTML = message;
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
